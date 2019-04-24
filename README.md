@@ -2,7 +2,7 @@
 
 This is a simple PHP script to take the [HTML tables published by Elections PEI for the 2019 Provincial General Election Results](http://results.electionspei.ca/provincial/results_2019/index.html) and convert them into machine-readable data.
 
-The result of the script is two files, under data/:
+The result of the script is four files, under data/:
 
 ## pei-election-poll-winners.csv
 
@@ -17,7 +17,15 @@ This is a CSV file of the winning party (PC, Green, Liberal) of each of the 256 
 	1-5,PC
 	1-6,PC
 	1-7,Green
-	
+
+## pei-election-poll-secondplace.csv
+
+This is a CSV file, formatted exactly like the winners file, but recording the *second place* finisher in each poll.
+
+## pei-election-poll-green-first-or-second.csv
+
+This is a CSV file, showing polls only where the Green candidate came first or second.
+
 ## pei-election-results.json
 
 This is a JSON file of all results from all polls in all districts, like this:
@@ -35,7 +43,7 @@ This is a JSON file of all results from all polls in all districts, like this:
 	      "PC": "66"
 	    },
 
-## License 
+## License
 
 Election results data is subject to [the terms outlined on the Elections PEI website](https://www.electionspei.ca/disclaimer):
 
