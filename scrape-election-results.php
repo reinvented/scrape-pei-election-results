@@ -274,7 +274,7 @@ $fp = fopen("data/pei-election-results.json", "w");
 fwrite($fp, json_encode($results));
 fclose($fp);
 
-// We also want a CSV file that record the winner of each poll
+// We also want a CSV file that records the winner of each poll
 $fp = fopen("data/pei-election-poll-winners.csv", "w");
 // Headers for the CSV: two columns, the district and poll
 // concatenated, plus the winning party.
@@ -305,6 +305,70 @@ for ($district = 1 ; $district <= 27 ; $district++) {
 				else {
 					// Write out a CSV value for this poll.
 					fwrite($fp, $district . "-" . $pollnumber . ",$winner\n");
+				}
+			}
+		}
+	}
+}
+fclose($fp);
+
+// We also want a CSV file that records the *second place* finisher of each poll
+$fp = fopen("data/pei-election-poll-secondplace.csv", "w");
+// Headers for the CSV: two columns, the district and poll
+// concatenated, plus the winning party.
+fwrite($fp, "distpoll,winner\n");
+
+// Loop through each of the 27 electoral districts
+for ($district = 1 ; $district <= 27 ; $district++) {
+	// The election in district 9 was delayed, so there are
+	// no results for that district, and we skip it.
+	if ($district != 9) {
+		// For each poll in each district...
+		foreach($results[$district] as $pollnumber => $poll) {
+			// If the poll is reporting results, the sum of the poll will be more than zero.
+			// Otherwise that poll has no results to report yet. Useful while results weren't
+			// yet fully reported; no longer needed now that all polls have reported.
+			if (array_sum($poll) > 0) {
+				// To find the second-place finisher, we sort the poll results, and then
+				// use the second element in the array.
+				arsort($poll);
+				$values_only = array_values($poll);
+				$secondplace = $values_only[1];
+				$second_place_party = array_search($secondplace, $poll);
+				fwrite($fp, $district . "-" . $pollnumber . ",$second_place_party\n");
+			}
+		}
+	}
+}
+fclose($fp);
+
+// We also want a CSV file that record the second place finisher of each poll
+$fp = fopen("data/pei-election-poll-green-first-or-second.csv", "w");
+// Headers for the CSV: two columns, the district and poll
+// concatenated, plus the winning party.
+fwrite($fp, "distpoll,winner\n");
+
+// Loop through each of the 27 electoral districts
+for ($district = 1 ; $district <= 27 ; $district++) {
+	// The election in district 9 was delayed, so there are
+	// no results for that district, and we skip it.
+	if ($district != 9) {
+		// For each poll in each district...
+		foreach($results[$district] as $pollnumber => $poll) {
+			// If the poll is reporting results, the sum of the poll will be more than zero.
+			// Otherwise that poll has no results to report yet. Useful while results weren't
+			// yet fully reported; no longer needed now that all polls have reported.
+			if (array_sum($poll) > 0) {
+				// To find the first- and second-place finishers, we sort the poll results, and then
+				// use the first and second elements in the array.
+				arsort($poll);
+				$values_only = array_values($poll);
+				$firstplace = $values_only[0];
+				$secondplace = $values_only[1];
+				$first_place_party = array_search($firstplace, $poll);
+				$second_place_party = array_search($secondplace, $poll);
+				if ($second_place_party == "Green" or $first_place_party == "Green") {
+					fwrite($fp, $district . "-" . $pollnumber . ",Green\n");
 				}
 			}
 		}
